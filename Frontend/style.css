@@ -215,7 +215,8 @@ footer,
 .addform,
 .watchlistcontainer,
 .wlheading,
-#loadMoreBtn{
+#loadMoreBtn,
+.tvcontainer{
   z-index: 1;
   position:relative
 }
@@ -223,6 +224,20 @@ footer,
 .video-modal{
   z-index: 2;
 }
+
+.remove-btn {
+  background-color: #dc3545;
+  color: white;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.remove-btn:hover{
+  background-color: #f82a2a;
+  color:white;
+}
+
 
 
 footer {
