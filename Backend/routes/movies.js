@@ -2,7 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 
-// API constants
+
 const API_KEY = process.env.API_KEY;
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 
@@ -80,17 +80,6 @@ router.get('/trending/:timeframe', async (req, res) => {
   }
 });
 
-// Top-rated TV shows
-router.get('/tv/top-rated', async (req, res) => {
-  try {
-    const page = req.query.page || 1;
-    const url = `${TMDB_BASE}/tv/top_rated?api_key=${API_KEY}&page=${page}`;
-    const data = await fetchFromTMDB(url);
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch top-rated TV shows' });
-  }
-});
 
 // Search movies (and TV) by query
 router.get('/search', async (req, res) => {
@@ -119,5 +108,43 @@ router.get('/details/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch movie details' });
   }
 });
+
+// Top-rated TV shows
+router.get('/tv/top-rated', async (req, res) => {
+  try {
+    const page = req.query.page || 1;
+    const url = `${TMDB_BASE}/tv/top_rated?api_key=${API_KEY}&page=${page}`;
+    const data = await fetchFromTMDB(url);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch top-rated TV shows' });
+  }
+});
+
+// TV show details by ID
+router.get('/tv/details/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const url = `${TMDB_BASE}/tv/${id}?api_key=${API_KEY}`;
+    const data = await fetchFromTMDB(url);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch TV show details' });
+  }
+});
+
+// Season details by TV ID and season number
+router.get('/tv/:tvId/season/:seasonNumber', async (req, res) => {
+  try {
+    const { tvId, seasonNumber } = req.params;
+    const url = `${TMDB_BASE}/tv/${tvId}/season/${seasonNumber}?api_key=${API_KEY}`;
+    const data = await fetchFromTMDB(url);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch season details' });
+  }
+});
+
+
 
 module.exports = router;

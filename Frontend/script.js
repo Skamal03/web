@@ -15,11 +15,9 @@ function toggleSubMenu(id) {
   submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
 }
 
-// Wait for DOM to be fully loaded
 document.addEventListener("DOMContentLoaded", function () {
   const API_BASE_URL = 'http://localhost:8080';
 
-  // Configuration for different pages
   const pageConfig = {
     'index.html': {
       container: '.movies',
@@ -62,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     'tvshows.html': {
       container: '.tv-shows',
-      endpoint: '/tv/top-rated',
+      endpoint: '/movies/tv/top-rated',
       hasLoadMore: true
     },
     'Alltime.html': {
@@ -110,28 +108,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const displayMovies = (movies) => {
     const fragment = document.createDocumentFragment();
-
+  
     movies.forEach(movie => {
       if (!movie.poster_path) return;
-
+  
+      const isTVPage = currentPath === 'tvshows.html';
+      const title = movie.title || movie.name;
+      const href = isTVPage 
+        ? `tv-details.html?id=${movie.id}&type=tv`
+        : `movie-details.html?id=${movie.id}&type=movie`;
+  
       const movieCard = document.createElement('div');
       movieCard.classList.add('movie-card');
       movieCard.innerHTML = `
-        <a href="movie-details.html?id=${movie.id}" style="text-decoration: none; color: inherit;">
+        <a href="${href}" style="text-decoration: none; color: inherit;">
           <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" 
-               alt="${movie.title}" 
+               alt="${title}" 
                class="movie-img"
                loading="lazy">
-          <h3>${movie.title}</h3>
+          <h3>${title}</h3>
           <p>Rating: ${movie.vote_average.toFixed(1)}</p>
         </a>
       `;
       fragment.appendChild(movieCard);
     });
-
+  
     movieContainer.appendChild(fragment);
   };
-
   const loadMovies = async () => {
     const data = await fetchMovies(currentPage);
     if (data) {
@@ -208,81 +211,3 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById('resultsContainer').innerHTML = '<p class="text-white">Error loading results.</p>';
     });
 });
-
-// movie details
-document.addEventListener("DOMContentLoaded", function () {
-  const API_BASE_URL = 'http://localhost:8080';
-
-  const params = new URLSearchParams(window.location.search);
-  const movieId = params.get('id');
-  const detailsContainer = document.getElementById('movieDetails');
-
-  if (!movieId) {
-    detailsContainer.innerHTML = "<p class='text-white'>Movie ID not found in URL.</p>";
-    return;
-  }
-
-  const detailsUrl = `${API_BASE_URL}/movies/details/${movieId}`;
-
-  fetch(detailsUrl)
-    .then(response => {
-      if (!response.ok) throw new Error("Failed to fetch movie details.");
-      return response.json();
-    })
-    .then(movie => {
-      const genres = movie.genres.map(g => g.name).join(', ');
-      const companies = movie.production_companies.map(c => c.name).join(', ');
-      const language = movie.original_language.toUpperCase();
-      const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '';
-
-      detailsContainer.innerHTML = `
-        <div class="text-white p-4">
-          <h2 class="text-center mb-5 fw-bold">${movie.title}</h2>
-
-          <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-4">
-            <!-- Left: Poster -->
-            <div class="text-center">
-              <img src="${poster}" alt="${movie.title}" style="border-radius: 10px; max-width: 300px;">
-              <p class="mt-2 text-warning"><em>${movie.tagline || ''}</em></p>
-            </div>
-
-            <div>
-              <p><strong>Release Date:</strong> ${movie.release_date}</p>
-              <p><strong>Duration:</strong> ${movie.runtime} mins</p>
-              <p><strong>Overall Rating:</strong> ${movie.vote_average.toFixed(1)}</p>
-              <p><strong>Language:</strong> ${language}</p>
-              <p><strong>Genres:</strong> ${genres}</p>
-              <p><strong>Production:</strong> ${companies}</p>
-              <p><strong>Overview:</strong><br> ${movie.overview}</p>
-
-              <div class="mt-5 d-flex gap-3 mb-5">
-                <button class="addwatclist btn btn-warning fw-bold">Add to Watchlist</button>
-                <button class="stream btn btn-primary fw-bold" onclick="streamMovie(${movie.id})">Stream</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-
-    })
-    .catch(error => {
-      console.error('Details error:', error);
-      detailsContainer.innerHTML = "<p class='text-white'>Error loading movie details.</p>";
-    });
-});
-
-// straming movies
-function streamMovie(tmdb_id) {
-  const player = document.createElement('div');
-  player.innerHTML = `
-    <div class="video-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:flex; justify-content:center; align-items:center; z-index:9999;">
-      <video id="videoPlayer" controls width="80%" style="outline: none;">
-        <source src="http://localhost:8080/stream/${tmdb_id}" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-      <button onclick="this.parentElement.remove()" style="position:absolute; top:20px; right:30px; font-size:25px; color:white; background:none; border:none; cursor:pointer;">&times;</button>
-      <button onclick="document.getElementById('videoPlayer').requestFullscreen()" style="position:absolute; bottom:20px; right:30px; font-size:16px; color:white; background:#333; border:none; padding:8px 12px; cursor:pointer;">Fullscreen</button>
-    </div>
-  `;
-  document.body.appendChild(player);
-}

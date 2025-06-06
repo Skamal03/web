@@ -212,7 +212,10 @@ footer,
 .movie-details,
 .trending-section,
 .container,
-.addform{
+.addform,
+.watchlistcontainer,
+.wlheading,
+#loadMoreBtn{
   z-index: 1;
   position:relative
 }

@@ -1,29 +1,47 @@
-// // Temporary in-memory store
-// let watchlist = [];
+const express = require('express');
+const Watchlist = require('../models/watchlist');
+const { authenticate } = require('../middleware/auth');
+const router = express.Router();
 
-// // Add movie to watchlist
-// app.post('/watchlist', (req, res) => {
-//     const movie = req.body;
-//     if (!movie || !movie.id) {
-//         return res.status(400).json({ error: 'Invalid movie data' });
-//     }
 
-//     // Prevent duplicates
-//     if (!watchlist.find(item => item.id === movie.id)) {
-//         watchlist.push(movie);
-//     }
+router.post('/', authenticate, async (req, res) => {
+  const { itemId, mediaType, title, posterPath, overview } = req.body;
+  if (!itemId || !mediaType) return res.status(400).json({ error: 'Missing required fields' });
 
-//     res.status(201).json({ message: 'Movie added to watchlist' });
-// });
+  try {
+    const existing = await Watchlist.findOne({ user: req.user.id, itemId, mediaType });
+    if (existing) return res.status(409).json({ error: 'Already in watchlist' });
 
-// // Get watchlist
-// app.get('/watchlist', (req, res) => {
-//     res.json(watchlist);
-// });
+    const item = new Watchlist({ user: req.user.id, itemId, mediaType, title, posterPath, overview });
+    await item.save();
+    res.status(201).json({ message: 'Added to watchlist' });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
-// // Remove movie from watchlist (optional)
-// app.delete('/watchlist/:id', (req, res) => {
-//     const movieId = parseInt(req.params.id);
-//     watchlist = watchlist.filter(item => item.id !== movieId);
-//     res.json({ message: 'Movie removed from watchlist' });
-// });
+router.get('/', authenticate, async (req, res) => {
+  try {
+    const items = await Watchlist.find({ user: req.user.id });
+    const grouped = {
+      movies: items.filter(i => i.mediaType === 'movie'),
+      tvshows: items.filter(i => i.mediaType === 'tv')
+    };
+    res.json(grouped);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch watchlist' });
+  }
+});
+
+
+router.delete('/:id/:type', authenticate, async (req, res) => {
+  const { id, type } = req.params;
+  try {
+    await Watchlist.deleteOne({ user: req.user.id, itemId: id, mediaType: type });
+    res.json({ message: 'Removed from watchlist' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to remove' });
+  }
+});
+
+module.exports = router;

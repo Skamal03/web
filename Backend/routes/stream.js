@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const Movie = require('../models/streammodel');  
-const { authenticate, isAdmin } = require('../middleware/adminauth');  
+const { authenticate, isAdmin } = require('../middleware/auth');  
 
 
 
