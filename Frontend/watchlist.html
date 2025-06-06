@@ -116,32 +116,32 @@
         const container = document.getElementById('watchlistcontainer');
 
         container.innerHTML = `
-          <h2 class="text-white">Movies</h2>
-          <div class="d-flex flex-wrap gap-3">
-            ${data.movies.map(m => `
+        <h2 class="text-white">Movies</h2>
+        <div class="d-flex flex-wrap gap-3">
+          ${data.movies.map(m => `
+            <div class="movie-card" data-id="${m.itemId}" data-type="movie">
               <a href="movie-details.html?id=${m.itemId}&type=movie" style="text-decoration: none;">
-                <div class="movie-card">
-                  <img src="https://image.tmdb.org/t/p/w200${m.posterPath}" alt="${m.title}">
-                  <h3>${m.title}</h3>
-                  <button class="remove-btn btn  m-2">Remove</button>
-                </div>
+                <img src="https://image.tmdb.org/t/p/w200${m.posterPath}" alt="${m.title}">
+                <h3>${m.title}</h3>
               </a>
-            `).join('')}
-          </div>
+              <button class="remove-btn btn m-2">Remove</button>
+            </div>
+          `).join('')}
+        </div>
 
-          <h2 class="text-white mt-5">TV Shows</h2>
-          <div class="d-flex flex-wrap gap-3">
-            ${data.tvshows.map(m => `
+        <h2 class="text-white mt-5">TV Shows</h2>
+        <div class="d-flex flex-wrap gap-3">
+          ${data.tvshows.map(m => `
+            <div class="movie-card" data-id="${m.itemId}" data-type="tv">
               <a href="tv-details.html?id=${m.itemId}&type=tv" style="text-decoration: none;">
-                <div class="movie-card">
-                  <img src="https://image.tmdb.org/t/p/w200${m.posterPath}" alt="${m.title}">
-                  <h3>${m.title}</h3>
-                  <p>TV Show</p>
-                </div>
+                <img src="https://image.tmdb.org/t/p/w200${m.posterPath}" alt="${m.title}">
+                <h3>${m.title}</h3>
               </a>
-            `).join('')}
-          </div>
-        `;
+              <button class="remove-btn btn m-2">Remove</button>
+            </div>
+          `).join('')}
+        </div>
+      `;
         container.querySelectorAll('.remove-btn').forEach(btn => {
           btn.addEventListener('click', async (e) => {
             const card = e.target.closest('.movie-card');
@@ -151,7 +151,7 @@
             const confirmed = confirm('Remove this from your watchlist?');
             if (!confirmed) return;
 
-            const res = await fetch(`http://localhost:8080/watchlist/${type}/${id}`, {
+            const res = await fetch(`http://localhost:8080/watchlist/movie/155`, {
               method: 'DELETE',
               headers: { 'Authorization': 'Bearer ' + token }
             });
@@ -169,8 +169,6 @@
       });
   });
 </script>
-
-
 
 <footer>
   <p class="mb-0">&copy; 2025 MovieApp, All Rights Reserved</p>

@@ -34,12 +34,23 @@ router.get('/', authenticate, async (req, res) => {
 });
 
 
-router.delete('/:id/:type', authenticate, async (req, res) => {
+router.delete('/:type/:id', authenticate, async (req, res) => {
   const { id, type } = req.params;
+
   try {
-    await Watchlist.deleteOne({ user: req.user.id, itemId: id, mediaType: type });
+    const result = await Watchlist.deleteOne({
+      user: req.user.id,
+      itemId: Number(id),
+      mediaType: type
+    });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Item not found in watchlist' });
+    }
+
     res.json({ message: 'Removed from watchlist' });
   } catch (err) {
+    console.error('Delete error:', err);
     res.status(500).json({ error: 'Failed to remove' });
   }
 });

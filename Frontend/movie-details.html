@@ -135,32 +135,31 @@
           const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '';
 
           detailsContainer.innerHTML = `
-            <div class="text-white p-4">
-              <h2 class="text-center mb-5 fw-bold">${movie.title}</h2>
+          <div class="text-white p-4 position-relative container">
+            <h2 class="text-center mb-5 fw-bold">${movie.title}</h2>
 
-              <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-4">
-                <!-- Left: Poster -->
-                <div class="text-center">
-                  <img src="${poster}" alt="${movie.title}" style="border-radius: 10px; max-width: 300px;">
-                  <p class="mt-2 text-warning"><em>${movie.tagline || ''}</em></p>
-                </div>
+            <div class="row gx-5">
+              <div class="col-12 col-md-4 text-center mb-lg-5 mb-md-3 mt-lg-5">
+                <img src="${poster}" alt="${movie.title}" class="img-fluid rounded" style="max-width: 90%;">
+                <p class="mt-3 px-4 text-warning"><em>${movie.tagline || ''}</em></p>
+              </div>
 
-                <div>
-                  <p><strong>Release Date:</strong> ${movie.release_date}</p>
-                  <p><strong>Duration:</strong> ${movie.runtime} mins</p>
-                  <p><strong>Overall Rating:</strong> ${movie.vote_average.toFixed(1)}</p>
-                  <p><strong>Language:</strong> ${language}</p>
-                  <p><strong>Genres:</strong> ${genres}</p>
-                  <p><strong>Production:</strong> ${companies}</p>
-                  <p><strong>Overview:</strong><br> ${movie.overview}</p>
+              <div class="col-12 col-md-8 px-md-4 my-lg-5">
+                <p><strong>Release Date:</strong> ${movie.release_date}</p>
+                <p><strong>Duration:</strong> ${movie.runtime} mins</p>
+                <p><strong>Overall Rating:</strong> ${movie.vote_average.toFixed(1)}</p>
+                <p><strong>Language:</strong> ${language}</p>
+                <p><strong>Genres:</strong> ${genres}</p>
+                <p><strong>Production:</strong> ${companies}</p>
+                <p><strong>Overview:</strong><br> ${movie.overview}</p>
 
-                  <div class="mt-5 d-flex gap-3 mb-5">
-                    <button class="addwatchlist btn btn-warning fw-bold">Add to Watchlist</button>
-                    <button class="stream btn btn-primary fw-bold" onclick="streamMovie(${movie.id})">Stream</button>
-                  </div>
+                <div class="mt-4 d-flex flex-column flex-sm-row gap-3">
+                  <button class="addwatchlist btn btn-warning fw-bold w-100 w-sm-auto">+ Add to Watchlist</button>
+                  <button class="stream btn btn-primary fw-bold w-100 w-sm-auto" onclick="streamMovie(${movie.id})">▶ Stream</button>
                 </div>
               </div>
             </div>
+          </div>
           `;
           
           document.querySelector('.addwatchlist').addEventListener('click', () => {
@@ -209,13 +208,13 @@
       document.body.appendChild(player);
     }
     </script>
-    
-    <footer class="footer">
-      <p class="mb-0">&copy; 2025 MovieApp, All Rights Reserved</p>
-      <a href='Addmovie.html' class="btn text-white">Add Movie</a>
-      <a href='' class="btn text-white">Request Movie</a>
-      <a href='' class="btn text-white">About Us</a>
-    </footer>
+
+<footer>
+  <p class="mb-0">&copy; 2025 MovieApp, All Rights Reserved</p>
+  <a href='Addmovie.html' class="btn text-white">Add Movie</a>
+  <a href='' class="btn text-white">Request Movie</a>
+  <a href='' class="btn text-white">About Us</a>
+</footer>
 
 </body>
 </html>

@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>TV Show Details</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
@@ -119,32 +121,44 @@
           ).join('');
   
           detailsContainer.innerHTML = `
-            <div class="text-white p-4">
-              <h2 class="text-center mb-5 fw-bold">${show.name}</h2>
-              <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-4">
-                <div class="text-center">
-                  <img src="${poster}" alt="${show.name}" style="border-radius: 10px; max-width: 300px;">
-                  <p class="mt-2 text-warning"><em>${show.tagline || ''}</em></p>
-                  <button id="addToWatchlistBtn" class="btn btn-warning mt-3">+ Add to Watchlist</button>
-                </div>
-                <div>
-                  <p><strong>First Air Date:</strong> ${show.first_air_date}</p>
-                  <p><strong>Status:</strong> ${show.status}</p>
-                  <p><strong>Language:</strong> ${language}</p>
-                  <p><strong>Genres:</strong> ${genres}</p>
-                  <p><strong>Overview:</strong><br> ${show.overview}</p>
-  
-                  <label for="seasonSelect"><strong>Seasons:</strong></label>
-                  <select id="seasonSelect" class="form-select mb-3" style="background-color: #292626; color: white; border: 1px solid #555; border-radius: 5px;">
+          <div class="text-white p-4 container">
+            <h2 class="text-center mb-5 fw-bold">${show.name}</h2>
+
+            <div class="row gx-5">
+              <!-- Poster -->
+              <div class="col-12 col-md-4 text-center mb-4 mb-md-0">
+                <img src="${poster}" alt="${show.name}" class="img-fluid rounded" style="max-width: 100%;">
+                <p class="mt-2 text-warning"><em>${show.tagline || ''}</em></p>
+              </div>
+
+              <!-- Show Info -->
+              <div class="col-12 col-md-8 text-start px-md-4">
+                <p><strong>First Air Date:</strong> ${show.first_air_date}</p>
+                <p><strong>Status:</strong> ${show.status}</p>
+                <p><strong>Language:</strong> ${language}</p>
+                <p><strong>Genres:</strong> ${genres}</p>
+                <p><strong>Overview:</strong><br> ${show.overview}</p>
+
+                <button id="addToWatchlistBtn" class="addwatchlist btn btn-warning mb-3 fw-bold w-100 w-sm-auto">
+                  + Add to Watchlist
+                </button>
+
+                <div class="mt-3">
+                  <label for="seasonSelect" class="mb-2"><strong>Seasons:</strong></label>
+                  <select id="seasonSelect" class="form-select" style="background-color: #292626; color: white; border: 1px solid #555; border-radius: 5px; max-width: 240px;">
                     ${seasonOptions}
                   </select>
-  
-                  <div id="episodesContainer"></div>
                 </div>
               </div>
             </div>
-          `;
-  
+
+            <div>
+              <h4 class="px-3 mt-4">Episodes</h4>
+            </div>
+            <div id="episodesContainer" class="epicontainer px-3">
+            </div>
+          </div>
+        `;
           // Add to Watchlist button logic (with login check)
           document.getElementById('addToWatchlistBtn').addEventListener('click', () => {
             if (!token) {
@@ -171,12 +185,11 @@
             .catch(err => alert('Failed to add to watchlist'));
           });
   
-          // Load first season's episodes
           loadEpisodes(tvId, show.seasons[0].season_number);
   
           // On season change
           document.getElementById('seasonSelect').addEventListener('change', (e) => {
-            const seasonNum = e.target.value;
+            const seasonNum = parseInt(e.target.value);
             loadEpisodes(tvId, seasonNum);
           });
         })
@@ -189,7 +202,7 @@
         const episodesContainer = document.getElementById('episodesContainer');
         episodesContainer.innerHTML = '<p>Loading episodes...</p>';
   
-        fetch(`http://localhost:8080/api/tv/${tvId}/season/${seasonNumber}`)
+        fetch(`http://localhost:8080/movies/tv/${tvId}/season/${seasonNumber}`)
           .then(response => {
             if (!response.ok) throw new Error("Failed to fetch season details.");
             return response.json();
@@ -199,22 +212,22 @@
               episodesContainer.innerHTML = '<p>No episodes found.</p>';
               return;
             }
-  
             const episodesHTML = season.episodes.map(ep => `
-              <div class="episode mb-3 p-3" style="border: 1px solid #555; border-radius: 8px;">
+            <div class="d-flex flex-wrap gap-3">
+              <div class="episode p-3 flex-fill" style="border: 1px solid #555; border-radius: 8px; min-width: 250px; text-align: center;">
                 <h5>Episode ${ep.episode_number}: ${ep.name}</h5>
                 <p><strong>Air Date:</strong> ${ep.air_date || 'N/A'}</p>
-                <p>${ep.overview || 'No overview available.'}</p>
+                <p class="text-start">${ep.overview || 'No overview available.'}</p>
               </div>
+            </div>
             `).join('');
   
             episodesContainer.innerHTML = `
-              <h4>Episodes</h4>
+            
               ${episodesHTML}
             `;
           })
           .catch(error => {
-            console.error('Error fetching episodes:', error);
             episodesContainer.innerHTML = '<p>Error loading episodes.</p>';
           });
       }
