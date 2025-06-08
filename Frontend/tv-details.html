@@ -174,10 +174,11 @@
                 'Authorization': 'Bearer ' + token
               },
               body: JSON.stringify({
-                type: 'tv',
-                id: show.id,
+                itemId: show.id,
+                mediaType: 'tv',
                 title: show.name,
-                posterPath: show.poster_path
+                posterPath: show.poster_path,
+                overview: show.overview
               })
             })
             .then(res => res.json())

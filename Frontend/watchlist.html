@@ -151,7 +151,7 @@
             const confirmed = confirm('Remove this from your watchlist?');
             if (!confirmed) return;
 
-            const res = await fetch(`http://localhost:8080/watchlist/movie/155`, {
+            const res = await fetch(`http://localhost:8080/api/watchlist/${type}/${id}`, {
               method: 'DELETE',
               headers: { 'Authorization': 'Bearer ' + token }
             });
