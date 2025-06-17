@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 
-import Header from "../components/Header";       
-import Footer from "../components/Footer";       
-import SideMenu from "../components/SideMenu";      
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import SideMenu from "../components/SideMenu";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -27,6 +27,7 @@ function SearchResults() {
         return res.json();
       })
       .then((data) => {
+        console.log("Fetched results:", data); // 🔍 debug
         setResults(data.results || []);
       })
       .catch((err) => setError(err.message))
@@ -58,17 +59,29 @@ function SearchResults() {
           {!loading && !error && results.length === 0 && (
             <p className="text-white">No results found.</p>
           )}
-          {!loading && !error &&
+          {!loading &&
+            !error &&
             results.map((item) => {
-              if (!item.poster_path) return null;
+              if (!item.poster_path || !item.id) return null;
 
               const title = item.title || item.name || "No Title";
-              const type = item.media_type === "tv" ? "tv" : "movie";
-              const detailPage = type === "tv" ? `/tv-details?id=${item.id}` : `/movie-details?id=${item.id}`;
+
+              // Use fallback if media_type is missing
+              const type =
+                item.media_type ||
+                (item.first_air_date ? "tv" : "movie");
+
+              const detailPage =
+                type === "tv"
+                  ? `/tv-details?id=${item.id}`
+                  : `/movie-details?id=${item.id}`;
 
               return (
                 <div key={item.id} className="movie-card" style={{ width: 200 }}>
-                  <Link to={detailPage} style={{ textDecoration: "none", color: "inherit" }}>
+                  <Link
+                    to={detailPage}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
                     <img
                       src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
                       alt={title}
