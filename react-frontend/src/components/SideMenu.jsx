@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import backicon from '../assets/back.png';
-import '../style/style.css';
+import '../style/sidebar.css';
 
 function SideMenu({ isOpen, onClose }) {
   const [openSubmenus, setOpenSubmenus] = useState({});
@@ -22,21 +23,21 @@ function SideMenu({ isOpen, onClose }) {
         </li>
 
         <li>
-          <a href="watchlist.html" className="menu-btn simple-link d-lg-none">
+          <Link to="/watchlist" className="simple-link menu-btn d-lg-none">
             WatchList
-          </a>
+          </Link>
         </li>
 
         <li>
-          <a href="Movies.html" className="menu-btn simple-link d-lg-none">
+          <Link to="/movies" className="simple-link menu-btn d-lg-none">
             Movies
-          </a>
+          </Link>
         </li>
 
         <li>
-          <a href="tvshows.html" className="menu-btn simple-link d-lg-none">
+          <Link to="/tvshows" className="simple-link menu-btn d-lg-none">
             TV Shows
-          </a>
+          </Link>
         </li>
 
         <li>
@@ -47,19 +48,18 @@ function SideMenu({ isOpen, onClose }) {
             Genres ▾
           </button>
           <ul
-            className={`submenu ${openSubmenus["genres"] ? "open" : ""}`}
-            id="genres"
-          >
-            {["Action", "Comedy", "Drama", "Adventure", "Horror", "War"].map(
+            className={`submenu ${openSubmenus["genres"] ? "open" : ""} px-2`}
+            id="genres">
+            {["action", "comedy", "drama", "adventure", "horror", "war"].map(
               (genre) => (
                 <li key={genre}>
-                  <a
-                    href={`${genre.toLowerCase()}.html`}
+                  <Link
+                    to={`/${genre}`}
                     className="submenu-link"
                     data-category={genre}
                   >
-                    {genre}
-                  </a>
+                    {genre.charAt(0).toUpperCase() + genre.slice(1)}
+                  </Link>
                 </li>
               )
             )}
@@ -69,23 +69,21 @@ function SideMenu({ isOpen, onClose }) {
         <li>
           <button
             className="menu-btn submenu-toggle"
-            onClick={() => toggleSubMenu("trending")}
-          >
+            onClick={() => toggleSubMenu("trending")}>
             Trending ▾
           </button>
           <ul
-            className={`submenu ${openSubmenus["trending"] ? "open" : ""}`}
-            id="trending"
-          >
+            className={`submenu ${openSubmenus["trending"] ? "open" : ""} px-2`}
+            id="trending">
             <li>
-              <a href="Trendingtoday.html" className="submenu-link">
+              <Link to="/trendingtoday" className="submenu-link">
                 Today
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="ThisWeek.html" className="submenu-link">
+              <Link to="/thisweek" className="submenu-link">
                 This Week
-              </a>
+              </Link>
             </li>
           </ul>
         </li>
@@ -98,18 +96,18 @@ function SideMenu({ isOpen, onClose }) {
             Top Rated ▾
           </button>
           <ul
-            className={`submenu ${openSubmenus["topRated"] ? "open" : ""}`}
+            className={`submenu ${openSubmenus["topRated"] ? "open" : ""} px-2`}
             id="topRated"
           >
             <li>
-              <a href="Alltime.html" className="submenu-link">
+              <Link to="/alltime" className="submenu-link">
                 All Time
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="ThisYear.html" className="submenu-link">
+              <Link to="/thisyear" className="submenu-link">
                 This Year
-              </a>
+              </Link>
             </li>
           </ul>
         </li>
