@@ -66,15 +66,14 @@ function SearchResults() {
 
               const title = item.title || item.name || "No Title";
 
-              // Use fallback if media_type is missing
               const type =
                 item.media_type ||
                 (item.first_air_date ? "tv" : "movie");
 
               const detailPage =
                 type === "tv"
-                  ? `/tv-details?id=${item.id}`
-                  : `/movie-details?id=${item.id}`;
+                  ? `/tv-details/${item.id}`
+                  : `/movie-details/${item.id}`;
 
               return (
                 <div key={item.id} className="movie-card" style={{ width: 200 }}>
